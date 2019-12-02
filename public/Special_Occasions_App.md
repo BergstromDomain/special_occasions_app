@@ -151,7 +151,7 @@ RSpec.feature "Creating Name" do
     fill_in "Last Name", with: "Alpha"
     click_button "Create Name"
 
-    expect(page).to have_content("Name has been created")
+    expect(page).to have_content("The name has been created")
     expect(page.current_path).to eq(root_path)
   end
 end
@@ -363,6 +363,72 @@ It can’t find the flash message. Add flash messaging to the _app/views/layouts
   <%= yield %>
 </body>
 ```
+
+### Adding validation
+Update the file _creating_name_spec.rb_ and add a negative scenario
+```ruby
+scenario "A user failes to create a new name" do
+  visit "/"
+
+  click_link "New Name"
+
+  fill_in "First name", with: ""
+  fill_in "Last name", with: ""
+  click_button "Create Name"
+
+  expect(page).to have_content("The name has not been created")
+  expect(page).to have_content("First name can't be blank")
+  expect(page).to have_content("Last name can't be blank")
+  expect(page.current_path).to eq(names_path)
+end
+```
+Running RSpec gives the error:
+```bash
+Failure/Error: expect(page).to have_content("Name has been created")
+  expected to find text "Name has been created" in "New Name"
+```
+![Error message](images/RSpecError_-_Expected_first_name_cant_be_blank.png)
+
+
+Update the file _models/name.rb_ to include validation and sort order
+```ruby
+class Name < ApplicationRecord
+  validates :first_name, presence: true
+  validates :last_name, presence: true
+
+  default_scope { order(created_at: :desc) }
+end
+```
+
+#### Displaying validation errors
+Update the _new.html.erb_ file to display the validation errors.
+```ruby
+<h3 class="text-center">Adding New Name</h3>
+<div class="row">
+  <div class="col-md-12">
+    <%= form_for(@name, :html => {class: "form-horizontal", role: "form"}) do |f| %>
+    <% if @name.errors.any? %>
+      <div class="panel panel-danger col-md-offset-1">
+        <div class="panel-heading">
+          <h2 class="panel-title">
+            <%= pluralize(@name.errors.count, "error") %>
+            prohibited this name from being saved: </h2>
+            <div class="panel-body">
+              <ul>
+                <% @name.errors.full_messages.each do |msg| %>
+                <li>
+                  <%= msg %>
+                </li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        </div>
+      <% end %>
+```
+
+
+
 #### Add Bootstrap for styling
 In the Gemfile add the following gems:
 ```ruby
