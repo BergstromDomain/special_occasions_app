@@ -18,23 +18,6 @@ rails server
 
 View the local application in your browser `http://localhost:3000/`
 
-##  Git
-###  Initializing the Git Repository
-```bash
-git init
-git status
-git add -A
-git commit -m "Initializing Lifestyle Events App"
-```
-
-### Pushing repository to GitHub
-From GitHub, copy the URL and paste it on the command line to push your existing repository GitHub
-```bash
-git remote add origin git@github.com:BergstromDomain/lifestyle_events_app.git
-git push -u origin master
-git remote -v
-```
-
 ##  RSpec and Capybara
 ###  Installing RSpec and Capybara
 Install _RSpec_
@@ -130,91 +113,164 @@ watch(rails.view_dirs)     { "spec/features" } # { |m| rspec.spec.call("features
 watch(rails.layouts)       { |m| rspec.spec.call("features/#{m[1]}") }
 ```
 
+##  Git
+###  Initializing the Git Repository
+```bash
+git init
+git status
+git add -A
+git commit -m "Initializing Special Occasions App and setting up the environment"
+```
 
-## CRUD Event Types
-### Create Lifestyle Event Types
+### Pushing repository to GitHub
+From GitHub, copy the URL and paste it on the command line to push your existing repository GitHub
+```bash
+git remote add origin git@github.com:BergstromDomain/special_occasions_app.git
+git push -u origin master
+git remote -v
+```
+
+## CRUD Names
+### Creating Name
 Create a topic branch
 ```bash
-git checkout -b creating-lifestyle-event-types
+git checkout -b creating-name
 ```
 #### Create feature specification
-Create a new file called _creating_event_types_spec.rb_ and make sure it starts with the line `require "rails_helper"`
+Create a new file called _creating_name_spec.rb_ and make sure it starts with the line `require "rails_helper"`
 ```ruby
 require "rails_helper"
 
-RSpec.feature "Creating Lifestyle Event Types" do
-  scenario "A user creates a new event type" do
+RSpec.feature "Creating Name" do
+  scenario "A user creates a new name" do
     visit "/"
 
-    click_link "New Lifestyle Event Type"
+    click_link "Create name"
 
-    fill_in "Name", with: "Birthday"
-    click_button "Create Lifestyle Event Type"
+    fill_in "First Name", with: "Adam"
+    fill_in "Last Name", with: "Alpha"
+    click_button "Create Name"
 
-    expect(page).to have_content("Lifestyle Event Type has been created")
-    expect(page.current_path).to eq(event_types_path)
+    expect(page).to have_content("Name has been created")
+    expect(page.current_path).to eq(root_path)
   end
 end
 ```
 #### Run RSpec and address errors
 ```bash
-rspec spec/features/creating_lifestyle_event_types_spec.rb
+rspec spec/features/creating_name_spec.rb
 ```
 
 #### Update the route file
+The first error states:
+```bash
+Failure/Error: visit "/"
+ActionController::RoutingError:
+  No route matches [GET] "/"
+```
+![Error message](images/RSpecError_-_No_route_match.png)
+
+
 Create a _root path_ by updating the _config/routes.rb_ file
 ```ruby
-root to: "lifestyle_event_types#index"
-```
-Create the required resources by updating the _config/routes.rb_ file
-```ruby
-resources :lifestyle_event_types
+root to: "names#index"
 ```
 
 #### Generate the controller
+The next error states:
+```bash
+Failure/Error: visit "/",
+ActionController::RoutingError:
+  uninitialized constant NamesController
+```
+![Error message](images/RSpecError_-_Uninitialized_constant.png)
+
+
 Use a generator to create a controller
 ```bash
-rails g controller lifestyle_event_types index
+rails g controller names index
 ```
+Remove the _get 'names/index'_ line from the _config/routes.rb_ file
+
 
 #### Create the index view
-Create the file _app/views/lifestyle_event_types/index.html.erb_ and add the link to _New Lifestyle Event Types_
+The next error states:
+```bash
+Failure/Error: click_link "New Name"
+Capybara::ElementNotFound:
+  Unable to find link "New Name"
+```
+![Error message](images/RSpecError_-_Unable_to_find_link_new.png)
+
+Go to _app/views/names/index.html.erb_ and remove the existing content from it and add a link.
 ```ruby
-<%= link_to "New Lifestyle Event Type", new_lifestyle_event_type_path, class: "btn btn-default btn-lg", id: "new-lifestyle-event-type-btn" %>
+<%= link_to "New Name", new_name_path %>
 ```
 
+
 #### Update the route file
-Add `resources` to the _config/routes.rb_ file
+The next error states:
+```bash
+Failure/Error: <%= link_to "New Name", new_name_path %>
+ActionView::Template::Error:
+  undefined local variable or method 'new_name_path'
+```
+![Error message](images/RSpecError_-_Link_to_new.png)
+
+Add the path by adding `resources` to the _config/routes.rb_ file
 ```ruby
-resources :lifestyle_event_types
+resources :names
 ```
 
 #### Add the new action to the controller
-Add the `new` action for the controller
+The next error states:
+```bash
+Failure/Error: click_link "New Name"
+AbstractController::ActionNotFound:
+  The action "new" could not be found for NamesController"
+```
+![Error message](images/RSpecError_-_The_action_could_not_be_found.png)
+
+Add the `new` action for the controller, _app/controllers/names_controller.rb_
 ```ruby
 def new
-  @lifestyle_event_type = LifestyleEventType.new
 end
 ```
 
 #### Create the new view
-Create the file _app/views/lifestyle_event_types/new.html.erb_
+The next error states:
+```bash
+Failure/Error: click_link "New Name"
+ActionController::UnknownFormat:
+  NamesController#new is missing a template for this request format and variant.
+```
+![Error message](images/RSpecError_-_Missing_a_template.png)
+
+
+Create the file _app/views/names/new.html.erb_
 ```ruby
-<h3 class="text-center">Adding New Lifestyle Event Type</h3>
+<h3 class="text-center">Adding New Name</h3>
 <div class="row">
   <div class="col-md-12">
-    <%= form_for(@lifestyle_event_type, :html => {class: "form-horizontal", role: "form"}) do |f| %>
+    <%= form_for(@name, :html => {class: "form-horizontal", role: "form"}) do |f| %>
       <div class="form-group">
         <div class="control-label col-md-1">
-          <%= f.label :title %>
+          <%= f.label :first_name %>
         </div>
         <div class="col-md-11">
-          <%= f.text_field :title, class: "form-control", placeholder: "Title of lifestyle event type", autofocus: true %>
+          <%= f.text_field :first_name, class: "form-control", autofocus: true %>
         </div>
+        <div class="form-group">
+          <div class="control-label col-md-1">
+            <%= f.label :last_name %>
+          </div>
+          <div class="col-md-11">
+            <%= f.text_field :last_name, class: "form-control", autofocus: true %>
+          </div>
       </div>
       <div class="form-group">
         <div class="col-md-offset-1 col-md-11">
-          <%= f.submit "Create Lifestyle Event Type", class: "btn btn-primary btn-lg pull-right" %>
+          <%= f.submit "Create Name", class: "btn btn-primary btn-lg pull-right" %>
         </div>
       </div>
     <% end %>
@@ -222,11 +278,37 @@ Create the file _app/views/lifestyle_event_types/new.html.erb_
 </div>
 ```
 
-#### Generate model
-Use a generator to create a model. __Note__ the model is singular and the controller is plural
+#### Add the new action to the controller
+The next error states:
 ```bash
-rails g model lifestyle_event_type title:string
+Failure/Error: <%= form_for(@name, :html => {class: "form-horizontal", role: "form"}) do |f| %>
+ActionView::Template::Error:
+  First argument in form cannot contain nil or be empty
 ```
+![Error message](images/RSpecError_-_First_argument_in_form.png)
+
+Update the `new` action for the controller, _app/controllers/names_controller.rb_ by adding an instance variable.
+```ruby
+def new
+  @name = Name.new
+end
+```
+
+#### Generate model
+The next error states:
+```bash
+Failure/Error: @name = Name.new
+NameError:
+  uninitialized constant NamesController::Name
+```
+![Error message](images/RSpecError_-_Uninitialized_constant_NamesController.png)
+
+Use a generator to create a model. __Note__ By convention, model names are singular and controller names are plural
+```bash
+rails g model name first_name:string  last_name:string full_name:string
+```
+
+Review and update the migration file _db/migrate/[TIMESTAMP]_create_names.rb_
 
 #### Run the migration
 Run the migration to create a database
@@ -235,32 +317,51 @@ rails db:migrate
 ```
 
 #### Add the create action to the controller
-Add the `create` action for the controller as well as the __private__ `lifestyle_event_type_params` method
+The next error states:
+```bash
+Failure/Error: click_button "Create Name"
+AbstractController::ActionNotFound:
+  The action 'create' could not be found for NamesController
+```
+![Error message](images/RSpecError_-_The_action_create_could_not_be_found.png)
+
+Add the `create` action for the controller as well as the __private__ `name_params` method
 ```ruby
 def create
-  @lifestyle_event_type = LifestyleEventType.new(lifestyle_event_type_params)
-  if @lifestyle_event_type.save
-    flash[:sucess] = "The lifestyle event type has been created"
-    redirect_to lifestyle_event_types_path
+  @name = Name.new(name_params)
+  if @name.save
+    flash[:sucess] = "The name has been created"
+    redirect_to root_path
   else
-    flash.now[:danger] = "The lifestyle event type has not been created"
+    flash.now[:danger] = "The name has not been created"
     render :new
   end
 end
 
 private
-  def lifestyle_event_type_params
-    params.require(:lifestyle_event_type).permit(:title)
+  def name_params
+    params.require(:name).permit(:first_name, :last_name)
   end
 ```
+
 #### Add flash to the application
-Update the file _app/views/layouts/application.html.erb_ to add flash to the application
+The next error states:
+```bash
+Failure/Error: expect(page).to have_content("Name has been created")
+  expected to find text "Name has been created" in "New Name"
+```
+![Error message](images/RSpecError_-_Expected_name_has_been_created.png)
+
+It can’t find the flash message. Add flash messaging to the _app/views/layouts/application.html.erb_ file:
 ```ruby
-<% flash.each do |key, message| %>
-  <div class="text-center alert alert-<%= key == 'notice'? 'success': 'danger' %>">
-    <%= message %>
-    </div>
-<% end %>
+<body>
+  <% flash.each do |key, message| %>
+    <div class="text-center alert alert-<%= key == 'notice'? 'success': 'danger' %>">
+      <%= message %>
+      </div>
+  <% end %>
+  <%= yield %>
+</body>
 ```
 #### Add Bootstrap for styling
 In the Gemfile add the following gems:
