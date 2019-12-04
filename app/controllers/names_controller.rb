@@ -1,5 +1,6 @@
 class NamesController < ApplicationController
   def index
+    @names = Name.all
   end
 
   def new
@@ -8,6 +9,7 @@ class NamesController < ApplicationController
 
   def create
     @name = Name.new(name_params)
+    @name.full_name = @name.first_name + " " + @name.last_name
     if @name.save
       flash[:sucess] = "The name has been created"
       redirect_to root_path
@@ -19,6 +21,6 @@ class NamesController < ApplicationController
 
   private
     def name_params
-      params.require(:name).permit(:first_name, :last_name)
+      params.require(:name).permit(:first_name, :last_name, :full_name)
     end
 end

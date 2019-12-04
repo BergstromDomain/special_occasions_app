@@ -1,1 +1,7 @@
 <%= link_to "New Name", new_name_path, class: "btn btn-primary btn-lg"%>
+
+<% @names.each do |name| %>
+  <div class="full-name">
+    <%= link_to name.full_name, name_path(name) %>
+  </div>
+<% end %>
