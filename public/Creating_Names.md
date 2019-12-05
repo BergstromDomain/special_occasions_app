@@ -22,7 +22,7 @@ Creating Names
 
 
 ## Create a feature branch
-Create a git feature branch
+Create a git feature branch.
 ```bash
 git checkout -b creating-name
 ```
