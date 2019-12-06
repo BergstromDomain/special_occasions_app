@@ -1,0 +1,33 @@
+<name class="detail-name">
+  <h1 class="full-name">
+    <%= "#{@name.first_name} #{@name.last_name}" %>
+  </h1>
+
+  <div class="admin">
+    <p>Created</p>
+    <div class="glyphicon glyphicon-calendar" id="name-created-date">
+      <small>
+      <%= @name.created_at.strftime("%d %B, %Y") %>
+      </small>
+    </div>
+    <div class="glyphicon glyphicon-user" id="name-created-by">
+      <small>
+      <%= "Niklas Bergstrom" %>
+      </small>
+    </div>
+
+    <br>
+    <p>Updated</p>
+    <div class="glyphicon glyphicon-calendar" id="name-created-date">
+      <small>
+      <%= @name.updated_at.strftime("%d %B, %Y") %>
+      </small>
+    </div>
+
+    <div class="glyphicon glyphicon-user" id="name-updated-by">
+      <small>
+        <%= "Admin" %>
+      </small>
+    </div>
+  </div>
+</name>

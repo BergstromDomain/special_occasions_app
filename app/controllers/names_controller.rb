@@ -23,7 +23,16 @@ class NamesController < ApplicationController
     @name = Name.find(params[:id])
   end
 
+  protected
+
+    def resource_not_found
+      message = "The name you are looking for could not be found"
+      flash[:alert] = message
+      redirect_to root_path
+    end
+
   private
+
     def name_params
       params.require(:name).permit(:first_name, :last_name)
     end

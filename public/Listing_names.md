@@ -6,10 +6,7 @@ Listing Names
 1. [Create git feature branch](#create-git-feature-branch)
 2. [Create RSpec feature specification with successful scenario](#create-rspec-feature-specification-with-successful-scenario)
   1. [Update create action of the controller](#update-create-action-of-the-controller)
-3. [Update RSpec feature specification with negative scenario](#update-rspec-feature-specification-with-negative-scenario)
-  1. [Add validation to the model](#add-validation-to-the-model)
-  2. [Display validation errors](#display-validation-errors)
-4. [Commit changes and merge into master branch](#commit-changes-and-merge-into-master-branch)
+3. [Commit changes and merge into master branch](#commit-changes-and-merge-into-master-branch)
 
 
 ## Create a feature branch
