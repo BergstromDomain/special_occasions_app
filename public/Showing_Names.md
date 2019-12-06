@@ -8,8 +8,7 @@ Showing Names
   1. [Add show action to the controller](#add-show-action-to-the-controller)
   2. [Create the show view](#create-the-show-view)
 3. [Update RSpec feature specification with negative scenario](#update-rspec-feature-specification-with-negative-scenario)
-  1. [Add validation to the model](#add-validation-to-the-model)
-  2. [Display validation errors](#display-validation-errors)
+  1. [Add functionality to handle record not found errors](#add-functionality-to-handle-record-not-found-errors)
 4. [Commit changes and merge into master branch](#commit-changes-and-merge-into-master-branch)
 
 
@@ -143,7 +142,7 @@ RSpec.describe "Names", type: :request do
 end
 ```
 
-### Add validation to model
+### Add functionality to handle record not found errors
 Running RSpec gives the error:
 ```bash
 Failure/Error: @name = Name.find(params[:id])
@@ -175,52 +174,18 @@ protected
   end
 ```
 
-### Display validation errors
-Running RSpec gives the error:
-```bash
-Failure/Error: expect(page).to have_content("Name has been created")
-  expected to find text "Name has been created" in "New Name"
-```
-![Error message](images/RSpecError_-_Expected_first_name_cant_be_blank.png)
-
-It is the same error as before since we are not displaying the errors. To address this, update the _new.html.erb_ file to display the validation errors.
-```ruby
-<h3 class="text-center">Adding New Name</h3>
-<div class="row">
-  <div class="col-md-12">
-    <%= form_for(@name, :html => {class: "form-horizontal", role: "form"}) do |f| %>
-    <% if @name.errors.any? %>
-      <div class="panel panel-danger col-md-offset-1">
-        <div class="panel-heading">
-          <h2 class="panel-title">
-            <%= pluralize(@name.errors.count, "error") %>
-            prohibited this name from being saved: </h2>
-            <div class="panel-body">
-              <ul>
-                <% @name.errors.full_messages.each do |msg| %>
-                <li>
-                  <%= msg %>
-                </li>
-                <% end %>
-              </ul>
-            </div>
-          </div>
-        </div>
-      <% end %>
-```
-
 ## Commit the changes and merge into master branch
 Check the _Git_ status and commit the updated files.
 ```bash
 git status
 git add -A
-git commit -m "Implementing creating name functionality"
+git commit -m "Implementing showing name functionality"
 ```
 
 Checkout the _master_ branch and merge the changes.
 ```bash
 git checkout master
-git merge creating-name
+git merge showing-name
 git push
 ```
 
