@@ -1,7 +1,13 @@
-<%= link_to "New Name", new_name_path, class: "btn btn-primary btn-lg"%>
+<div>
+  <%= link_to "New Name", new_name_path, class: "btn btn-primary btn-lg"%>
+</div>
+<br>
 
-<% @names.each do |name| %>
-  <div class="full-name">
-    <%= link_to "#{name.first_name} #{name.last_name}", name_path(name) %>
-  </div>
-<% end %>
+<h1>Names</h1>
+<div>
+  <% @names.each do |name| %>
+    <div class="full-name">
+      <%= link_to "#{name.first_name} #{name.last_name}", name_path(name) %>
+    </div>
+  <% end %>
+</div>

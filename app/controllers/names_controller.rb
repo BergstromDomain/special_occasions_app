@@ -23,6 +23,22 @@ class NamesController < ApplicationController
     @name = Name.find(params[:id])
   end
 
+  def edit
+    @name = Name.find(params[:id])
+  end
+
+  def update
+    @name = Name.find(params[:id])
+    @name.full_name = "#{@name.first_name} #{@name.last_name}"
+    if @name.update(name_params)
+      flash[:sucess] = "The name #{@name.full_name} has been updated"
+      redirect_to name_path(@name)
+    else
+      flash.now[:danger] = "The name #{@name.full_name} has not been updated"
+      render :edit
+    end
+  end
+
   protected
 
     def resource_not_found

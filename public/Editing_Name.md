@@ -1,4 +1,4 @@
-Creating Names
+Editing Name
 ==================================================
 
 
@@ -24,26 +24,30 @@ Creating Names
 ## Create a feature branch
 Create a git feature branch.
 ```bash
-git checkout -b creating-name
+git checkout -b editing-name
 ```
 
 ## Create feature specification with successful scenario
 Create a new file called _creating_name_spec.rb_ and make sure it starts with the line `require "rails_helper"`. Add the steps and the expected results from the actions.
 ```ruby
 require "rails_helper"
+RSpec.feature "Editing Name" do
+  before do
+    Name.delete_all
+    @name = Name.create(first_name: "Adam", last_name: "Alpha")
+  end
 
-RSpec.feature "Creating Name" do
-  scenario "A user creates a new name" do
+  scenario "A user lists all names" do
     visit "/"
+    click_link ("#{@name.first_name} #{@name.last_name}")
 
-    click_link "Create name"
+    click_link "Edit Name"
+    fill_in "First name", with: "Bertil"
+    fill_in "Last name", with: "Bravo"
+    click_button "Update Name"
 
-    fill_in "First Name", with: "Adam"
-    fill_in "Last Name", with: "Alpha"
-    click_button "Create Name"
-
-    expect(page).to have_content("The name has been created")
-    expect(page.current_path).to eq(root_path)
+    expect(page).to have_content("Name has been updated")
+    expect(page.current_path).to eq(name_path(@name))
   end
 end
 ```
@@ -53,117 +57,94 @@ Run RSpec and address each error as they occur.
 rspec spec/features/creating_name_spec.rb
 ```
 
-### Add root path to the route file
-The first error states:
-```bash
-Failure/Error: visit "/"
-ActionController::RoutingError:
-  No route matches [GET] "/"
-```
-![Error message](images/RSpecError_-_No_route_match.png)
-
-To address this, create a _root path_ by updating the _config/routes.rb_ file
-```ruby
-root to: "names#index"
-```
-
-### Generate the controller
-Running RSpec again gives us the next error:
-```bash
-Failure/Error: visit "/",
-ActionController::RoutingError:
-  uninitialized constant NamesController
-```
-![Error message](images/RSpecError_-_Uninitialized_constant.png)
-
-
-To address this, create a controller using a generator
-```bash
-rails g controller names index
-```
-
-Remove the _get 'names/index'_ line from the _config/routes.rb_ file
-
-
 ### Add new link from index view
-Running RSpec again gives us the next error:
+Running RSpec gives us the first error:
 ```bash
-Failure/Error: click_link "New Name"
+Failure/Error: click_link "Edit Name"
 Capybara::ElementNotFound:
-  Unable to find link "New Name"
+  Unable to find link "Edit Name"
 ```
-![Error message](images/RSpecError_-_Unable_to_find_link_new.png)
+![Error message](images/RSpecError_-_Unable_to_find_link_edit.png)
 
-To address this, update the file _app/views/names/index.html.erb_ by removing the existing content and add a link to _new_name_path_.
+To address this, update the file _app/views/names/show.html.erb_ by adding a link to _edit_name_path_.
 ```ruby
-<%= link_to "New Name", new_name_path %>
+<%= link_to "Edit Name", edit_name_path(@name), class: "btn btn-primary btn-lg btn-space" %>
 ```
 
-
-### Add resources to the route file
-Running RSpec again gives us the next error:
-```bash
-Failure/Error: <%= link_to "New Name", new_name_path %>
-ActionView::Template::Error:
-  undefined local variable or method 'new_name_path'
-```
-![Error message](images/RSpecError_-_Link_to_new.png)
-
-To address this, add `resources` to the _config/routes.rb_ file
-```ruby
-resources :names
-```
 
 ### Add the new action to the controller
 Running RSpec again gives us the next error:
 ```bash
-Failure/Error: click_link "New Name"
+Failure/Error: click_link "Edit Name"
 AbstractController::ActionNotFound:
-  The action "new" could not be found for NamesController"
+  The action "edit" could not be found for NamesController"
 ```
-![Error message](images/RSpecError_-_The_action_could_not_be_found.png)
+![Error message](images/RSpecError_-_The_action_edit_could_not_be_found.png)
 
-To address this, add the `new` action for the controller, _app/controllers/names_controller.rb_
+To address this, add the `edit` action for the controller, _app/controllers/names_controller.rb_
 ```ruby
-def new
+def edit
+  @name = Name.find(params[:id])
 end
 ```
 
-### Create the new view
+### Create the edit view
 Running RSpec again gives us the next error:
 ```bash
-Failure/Error: click_link "New Name"
+Failure/Error: click_link "Edit Name"
 ActionController::UnknownFormat:
   NamesController#new is missing a template for this request format and variant.
 ```
-![Error message](images/RSpecError_-_Missing_a_template.png)
+![Error message](images/RSpecError_-_Edit_action_is_missing_a_template.png)
 
 
-To address this, create the file _app/views/names/new.html.erb_. Specific _Bootstrap_ classes are used for styling.
+To address this, create the file _app/views/names/edit.html.erb_. Specific _Bootstrap_ classes are used for styling.
 
 ```ruby
-<h3 class="text-center">Adding New Name</h3>
+<h3 class="text-center">Editing A Name</h3>
 <div class="row">
   <div class="col-md-12">
     <%= form_for(@name, :html => {class: "form-horizontal", role: "form"}) do |f| %>
+    <% if @name.errors.any? %>
+      <div class="panel panel-danger col-md-offset-1">
+        <div class="panel-heading">
+          <h2 class="panel-title">
+            <%= pluralize(@name.errors.count, "error") %>
+            prohibited this name from being saved: </h2>
+            <div class="panel-body">
+              <ul>
+                <% @name.errors.full_messages.each do |msg| %>
+                <li>
+                  <%= msg %>
+                </li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
       <div class="form-group">
-        <div class="control-label col-md-1">
+        <div class="control-label col-md-2">
           <%= f.label :first_name %>
         </div>
-        <div class="col-md-11">
-          <%= f.text_field :first_name, class: "form-control", autofocus: true %>
+        <div class="col-md-10">
+          <%= f.text_field :first_name, class: "form-control pull-right", autofocus: true %>
         </div>
-        <div class="form-group">
-          <div class="control-label col-md-1">
-            <%= f.label :last_name %>
-          </div>
-          <div class="col-md-11">
-            <%= f.text_field :last_name, class: "form-control", autofocus: true %>
-          </div>
       </div>
+
+      <div class="form-group">
+        <div class="control-label col-md-2">
+          <%= f.label :last_name %>
+        </div>
+        <div class="col-md-10">
+          <%= f.text_field :last_name, class: "form-control pull-right", autofocus: true %>
+        </div>
+      </div>
+
       <div class="form-group">
         <div class="col-md-offset-1 col-md-11">
-          <%= f.submit "Create Name", class: "btn btn-primary btn-lg pull-right" %>
+          <%= f.submit "Update Name", class: "btn btn-primary btn-lg pull-right" %>
         </div>
       </div>
     <% end %>
@@ -171,88 +152,32 @@ To address this, create the file _app/views/names/new.html.erb_. Specific _Boots
 </div>
 ```
 
-### Add instance variable to the controller
+
+### Add the update action to the controller
 Running RSpec again gives us the next error:
 ```bash
-Failure/Error: <%= form_for(@name, :html => {class: "form-horizontal", role: "form"}) do |f| %>
-ActionView::Template::Error:
-  First argument in form cannot contain nil or be empty
-```
-![Error message](images/RSpecError_-_First_argument_in_form.png)
-
-To address this, update the `new` action for the controller, _app/controllers/names_controller.rb_ by adding an instance variable.
-```ruby
-def new
-  @name = Name.new
-end
-```
-
-### Generate the model
-Running RSpec again gives us the next error:
-```bash
-Failure/Error: @name = Name.new
-NameError:
-  uninitialized constant NamesController::Name
-```
-![Error message](images/RSpecError_-_Uninitialized_constant_NamesController.png)
-
-To address this, create a model using a generator. __Note__ By convention, model names are singular and controller names are plural.
-```bash
-rails g model name first_name:string  last_name:string full_name:string
-```
-
-Review and update the migration file _db/migrate/[TIMESTAMP]_create_names.rb_ if required. Run the migration to create a database table.
-```bash
-rails db:migrate
-```
-
-### Add create action to the controller
-Running RSpec again gives us the next error:
-```bash
-Failure/Error: click_button "Create Name"
+Failure/Error: click_link "Edit Name"
 AbstractController::ActionNotFound:
-  The action 'create' could not be found for NamesController
+  The action "update" could not be found for NamesController"
 ```
-![Error message](images/RSpecError_-_The_action_create_could_not_be_found.png)
+![Error message](images/RSpecError_-_The_action_update_could_not_be_found.png)
 
-To address this, add the `create` action for the controller as well as the __private__ `name_params` method
+To address this, add the `update` action for the controller, _app/controllers/names_controller.rb_
 ```ruby
-def create
-  @name = Name.new(name_params)
-  if @name.save
-    flash[:sucess] = "The name has been created"
+def update
+  @name = Name.find(params[:id])
+  if @name.update(name_params)
+    @name.full_name = "#{@name.first_name} #{@name.last_name}"
+    flash[:sucess] = "The name #{@name.full_name} has been updated"
     redirect_to root_path
   else
-    flash.now[:danger] = "The name has not been created"
-    render :new
+    flash.now[:danger] = "The name #{@name.full_name} has not been updated"
+    render :edit
   end
 end
-
-private
-  def name_params
-    params.require(:name).permit(:first_name, :last_name)
-  end
 ```
 
-### Add flash to the application
-Running RSpec again gives us the next error:
-```bash
-Failure/Error: expect(page).to have_content("Name has been created")
-  expected to find text "Name has been created" in "New Name"
-```
-![Error message](images/RSpecError_-_Expected_name_has_been_created.png)
 
-To address this, add flash messaging to the _app/views/layouts/application.html.erb_ file using _Bootstrap_ classes.
-```ruby
-<body>
-  <% flash.each do |key, message| %>
-    <div class="text-center alert alert-<%= key == 'notice'? 'success': 'danger' %>">
-      <%= message %>
-      </div>
-  <% end %>
-  <%= yield %>
-</body>
-```
 
 ## Update RSpec feature specification with negative scenario
 Update the file _creating_name_spec.rb_ and add a negative scenario.

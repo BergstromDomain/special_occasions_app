@@ -56,5 +56,4 @@ RSpec.feature "Creating Name" do
     expect(page).to have_content("Last name can't be blank")
     expect(page.current_path).to eq(names_path)
   end
-
 end

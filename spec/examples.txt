@@ -1,12 +1,14 @@
 example_id                                         | status  | run_time        |
 -------------------------------------------------- | ------- | --------------- |
 ./spec/controllers/names_controller_spec.rb[1:1:1] | passed  | 0.01005 seconds |
-./spec/features/creating_name_spec.rb[1:1]         | passed  | 0.24949 seconds |
-./spec/features/creating_name_spec.rb[1:2]         | passed  | 0.0244 seconds  |
-./spec/features/creating_name_spec.rb[1:3]         | passed  | 0.02315 seconds |
-./spec/features/creating_name_spec.rb[1:4]         | passed  | 0.02563 seconds |
-./spec/features/listing_name_spec.rb[1:1]          | passed  | 0.06252 seconds |
-./spec/features/showing_name_spec.rb[1:1]          | passed  | 0.04869 seconds |
+./spec/features/creating_name_spec.rb[1:1]         | passed  | 0.21816 seconds |
+./spec/features/creating_name_spec.rb[1:2]         | passed  | 0.02125 seconds |
+./spec/features/creating_name_spec.rb[1:3]         | passed  | 0.02346 seconds |
+./spec/features/creating_name_spec.rb[1:4]         | passed  | 0.02864 seconds |
+./spec/features/editing_name_spec.rb[1:1]          | passed  | 0.07203 seconds |
+./spec/features/editing_name_spec.rb[1:2]          | passed  | 0.03912 seconds |
+./spec/features/listing_names_spec.rb[1:1]         | passed  | 0.03003 seconds |
+./spec/features/showing_name_spec.rb[1:1]          | passed  | 0.03431 seconds |
 ./spec/helpers/names_helper_spec.rb[1:1]           | pending | 0.00002 seconds |
 ./spec/models/name_spec.rb[1:1]                    | pending | 0.00001 seconds |
 ./spec/requests/names_spec.rb[1:1:1:1]             | passed  | 0.14868 seconds |
