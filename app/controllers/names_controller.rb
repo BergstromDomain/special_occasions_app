@@ -1,10 +1,13 @@
 class NamesController < ApplicationController
+  before_action :set_name, only: [:show, :edit, :update, :destroy]
+
   def index
     @names = Name.all
   end
 
   def new
     @name = Name.new
+    @submit_button_name = "Create Name"
   end
 
   def create
@@ -20,15 +23,13 @@ class NamesController < ApplicationController
   end
 
   def show
-    @name = Name.find(params[:id])
   end
 
   def edit
-    @name = Name.find(params[:id])
+    @submit_button_name = "Update Name"
   end
 
   def update
-    @name = Name.find(params[:id])
     @name.full_name = "#{@name.first_name} #{@name.last_name}"
     if @name.update(name_params)
       flash[:notice] = "The name #{@name.full_name} has been updated"
@@ -40,7 +41,6 @@ class NamesController < ApplicationController
   end
 
   def destroy
-    @name = Name.find(params[:id])
     if @name.destroy
       flash[:notice] = "The name #{@name.first_name} #{@name.last_name} has been deleted"
       redirect_to names_path
@@ -56,6 +56,10 @@ class NamesController < ApplicationController
     end
 
   private
+
+    def set_name
+      @name = Name.find(params[:id])
+    end
 
     def name_params
       params.require(:name).permit(:first_name, :last_name)

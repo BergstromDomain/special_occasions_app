@@ -71,13 +71,13 @@ data: { confirm: "Are you sure you want to delete the name?" }, class: "btn btn-
 ### Add the new action to the controller
 Running RSpec again gives us the next error:
 ```bash
-Failure/Error: click_link "Edit Name"
+Failure/Error: click_link "Delete Name"
 AbstractController::ActionNotFound:
-  The action "edit" could not be found for NamesController"
+  The action "destroy" could not be found for NamesController"
 ```
-![Error message](images/RSpecError_-_The_action_edit_could_not_be_found.png)
+![Error message](images/RSpecError_-_The_action_destroy_could_not_be_found.png)
 
-To address this, add the `edit` action for the controller, _app/controllers/names_controller.rb_
+To address this, add the `destroy` action for the controller, _app/controllers/names_controller.rb_
 ```ruby
 def edit
   @name = Name.find(params[:id])
