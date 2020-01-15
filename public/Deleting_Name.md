@@ -1,4 +1,4 @@
-Editing Name
+Deleting Name
 ==================================================
 
 
@@ -22,51 +22,49 @@ Editing Name
 ## Create a feature branch
 Create a git feature branch.
 ```bash
-git checkout -b editing-name
+git checkout -b deleting-name
 ```
 
 ## Create feature specification with successful scenario
-Create a new file called _creating_name_spec.rb_ and make sure it starts with the line `require "rails_helper"`. Add the steps and the expected results from the actions.
+Create a new file called _deleting_name_spec.rb_ and make sure it starts with the line `require "rails_helper"`. Add the steps and the expected results from the actions.
 ```ruby
 require "rails_helper"
-RSpec.feature "Editing Name" do
+RSpec.feature "Deleting a Name" do
+
   before do
     Name.delete_all
     @name = Name.create(first_name: "Adam", last_name: "Alpha")
   end
 
-  scenario "A user lists all names" do
+  scenario "A user deletes a name" do
     visit "/"
     click_link ("#{@name.first_name} #{@name.last_name}")
+    click_link "Delete Name"
 
-    click_link "Edit Name"
-    fill_in "First name", with: "Bertil"
-    fill_in "Last name", with: "Bravo"
-    click_button "Update Name"
-
-    expect(page).to have_content("Name has been updated")
-    expect(page.current_path).to eq(name_path(@name))
+    expect(page).to have_content("The name #{@name.first_name} #{@name.last_name} has been deleted")
+    expect(current_path).to eq(names_path)
   end
 end
 ```
 
 Run RSpec and address each error as they occur.
 ```bash
-rspec spec/features/creating_name_spec.rb
+rspec spec/features/names/deleting_name_spec.rb
 ```
 
 ### Add new link from index view
 Running RSpec gives us the first error:
 ```bash
-Failure/Error: click_link "Edit Name"
+Failure/Error: click_link "Delete Name"
 Capybara::ElementNotFound:
-  Unable to find link "Edit Name"
+  Unable to find link "Delete Name"
 ```
-![Error message](images/RSpecError_-_Unable_to_find_link_edit.png)
+![Error message](images/RSpecError_-_Unable_to_find_link_delete.png)
 
-To address this, update the file _app/views/names/show.html.erb_ by adding a link to _edit_name_path_.
+To address this, update the file _app/views/names/show.html.erb_ by adding a link to _delete_name_path_.
 ```ruby
-<%= link_to "Edit Name", edit_name_path(@name), class: "btn btn-primary btn-lg btn-space" %>
+<%= link_to "Delete Name", name_path(@name), method: :delete,
+data: { confirm: "Are you sure you want to delete the name?" }, class: "btn btn-primary btn-lg btn-space" %>
 ```
 
 

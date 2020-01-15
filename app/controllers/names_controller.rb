@@ -11,7 +11,7 @@ class NamesController < ApplicationController
     @name = Name.new(name_params)
     @name.full_name = "#{@name.first_name} #{@name.last_name}"
     if @name.save
-      flash[:sucess] = "The name #{@name.full_name} has been created"
+      flash[:notice] = "The name #{@name.full_name} has been created"
       redirect_to root_path
     else
       flash.now[:danger] = "The name #{@name.full_name} has not been created"
@@ -31,11 +31,19 @@ class NamesController < ApplicationController
     @name = Name.find(params[:id])
     @name.full_name = "#{@name.first_name} #{@name.last_name}"
     if @name.update(name_params)
-      flash[:sucess] = "The name #{@name.full_name} has been updated"
+      flash[:notice] = "The name #{@name.full_name} has been updated"
       redirect_to name_path(@name)
     else
       flash.now[:danger] = "The name #{@name.full_name} has not been updated"
       render :edit
+    end
+  end
+
+  def destroy
+    @name = Name.find(params[:id])
+    if @name.destroy
+      flash[:notice] = "The name #{@name.first_name} #{@name.last_name} has been deleted"
+      redirect_to names_path
     end
   end
 
